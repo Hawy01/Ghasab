@@ -1,33 +1,32 @@
 name: Build Ghasab APK
-on: [push] # سيبدأ البناء تلقائياً في كل مرة تعدل فيها الكود
+on: [push]
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
+      
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v4
         with:
-          python-version: '3.11'
-
-      - name: Install dependencies
-        run: |
-          pip install flet yt-dlp
-
-      - name: Setup Flutter
+          python-version: '3.10'
+          
+      - name: Install Flutter SDK
         uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
 
+      - name: Install Flet & Dependencies
+        run: |
+          pip install flet yt-dlp google-genai
+          
       - name: Build APK
         run: |
-          # نستخدم flet build apk لبناء التطبيق
-          flet build apk
-          
-      - name: Upload APK Artifact
+          flet build apk --package-name com.ghasab.downloader --android-permissions "android.permission.INTERNET,android.permission.WRITE_EXTERNAL_STORAGE,android.permission.READ_EXTERNAL_STORAGE,android.permission.MANAGE_EXTERNAL_STORAGE"
+
+      - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: Ghasab-PRO-Package
+          name: Tahmil-Ghasab-APK
           path: build/apk/*.apk
